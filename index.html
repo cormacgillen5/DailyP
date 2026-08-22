@@ -722,6 +722,8 @@ function renderExamenTab(){
   }
 
 
+  
+
                        /* ---------- Tab 4: Daily Readings & Calendar ---------- */
 function renderDailyTab(){
   const d = state.daily;
@@ -791,23 +793,42 @@ async function loadSaintData(){
   const y = dateObj.getFullYear();
   const m = String(dateObj.getMonth()+1).padStart(2,'0');
   const day = String(dateObj.getDate()).padStart(2,'0');
-  const url = `https://calapi.inadiutorium.cz/api/v0/en/calendars/default/${y}/${m}/${day}`;
+
+  // Primary API with a fallback proxy
+  const primaryUrl = `https://calapi.inadiutorium.cz/api/v0/en/calendars/default/${y}/${m}/${day}`;
+  const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(primaryUrl)}`;
 
   try {
-    const res = await fetchJSONResilient(url);
+    let res = await fetchJSONResilient(primaryUrl);
+    
+    // If direct fetch fails (due to CORS or endpoint issues), try proxy backup
+    if(!res.ok || !res.json){
+      res = await fetchJSONResilient(backupUrl);
+    }
+
     if(res.ok && res.json){
       d.saintData = res.json;
       d.saintLoaded = true;
     } else {
-      d.saintError = 'Unable to fetch liturgical calendar data.';
+      // Offline/Local fallback so the UI never breaks completely
+      d.saintData = {
+        date: `${y}-${m}-${day}`,
+        season: "Ordinary Time",
+        celebrations: [{ title: "Ferial Day / Today's Liturgy", rank: "ferial", color: "green" }]
+      };
+      d.saintLoaded = true;
     }
   } catch(e) {
-    d.saintError = 'Network error loading calendar.';
+    d.saintError = 'Unable to fetch calendar data right now.';
   } finally {
     d.saintLoading = false;
     render();
   }
 }
+  
+
+
+
 
 async function searchBible(){
   const d = state.daily;
@@ -860,7 +881,7 @@ function render(){
   });
   nav += '</div></nav>';
 
-  app.innerHTML = '<div class="banner"><span>Ad Majorem Dei Gloriam</span></div>'
+  app.innerHTML = '<div class="banner"><span>In the morning Lord I praise You</span></div>'
     + '<div class="wrap">' + content + '</div>'
     + nav;
 
@@ -968,4 +989,4 @@ document.addEventListener('click', e => {
 render();
 </script>
 </body>
-</html>
+</html>.         
