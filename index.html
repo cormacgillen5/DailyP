@@ -514,10 +514,13 @@ const state = {
   examen: {
     done: store.get('examen_' + todayKey(), {})
   },
-  daily: {
-    saintLoaded: false, saintLoading: false, saintError: '', saintData: null,
-    bibleQuery: '', bibleLoading: false, bibleError: '', bibleResult: null
-  },
+ daily: {
+  saintLoaded: false, saintLoading: false, saintError: '', saintData: null,
+  readingsLoading: false, readingsError: '', readingsData: null,
+  bibleQuery: '', bibleLoading: false, bibleError: '', bibleResult: null
+ },
+
+  
   tts: { playingKey: null }
 };
 
