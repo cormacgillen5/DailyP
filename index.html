@@ -2,82 +2,435 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Daily Prayer">
-  <link rel="apple-touch-icon" href="https://img.icons8.com/ios-filled/192/ffffff/cross.png">
-  <title>In the Morning, Lord, Hear My Voice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Devotional</title>
   <style>
     :root {
-      --bg: #f9f8f6;
+      --bg: #fbf7f0;
       --card-bg: #ffffff;
-      --text: #2c2c2c;
-      --subtext: #666666;
-      --gold: #b38b4d;
-      --gold-light: #f4ede2;
-      --border: #e0dad0;
-      --accent: #8c2d19;
+      --border: #e2d7c5;
+      --maroon: #6b1d2f;
+      --gold: #b38f4f;
+      --gold-light: #f5eedc;
+      --text: #2c2523;
+      --text-muted: #7a6e67;
+      --shadow: 0 4px 12px rgba(107, 29, 47, 0.05);
+      --font-serif: "Georgia", "Times New Roman", serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding-bottom: 80px;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    .banner { background-color: var(--accent); color: #fff; text-align: center; padding: 12px 16px; font-weight: 500; font-size: 0.95rem; letter-spacing: 0.5px; }
-    .wrap { max-width: 600px; margin: 0 auto; padding: 16px; }
+    .banner {
+      background-color: var(--maroon);
+      color: var(--gold-light);
+      text-align: center;
+      padding: 6px 12px;
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--gold);
+    }
 
-    .page-header { margin-bottom: 20px; text-align: center; }
-    .page-header h1 { font-size: 1.5rem; color: var(--accent); margin-bottom: 4px; }
-    .page-header h2 { font-size: 1.1rem; color: var(--gold); font-weight: 400; }
-    .page-header p { font-size: 0.85rem; color: var(--subtext); font-style: italic; margin-top: 4px; }
+    .wrap {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px;
+    }
 
-    .card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .content { width: 100%; }
+    .page-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-    .section-label { font-weight: 600; font-size: 0.9rem; color: var(--accent); margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; }
-    .field-label { font-size: 0.85rem; font-weight: 600; color: var(--subtext); }
-    .field-hint { font-size: 0.8rem; color: var(--subtext); }
-    .sub-label { font-size: 0.8rem; font-weight: 600; color: var(--gold); margin-top: 8px; }
-    .sub-text { font-size: 0.9rem; color: var(--text); line-height: 1.4; }
+    .page-header h1 {
+      font-family: var(--font-serif);
+      color: var(--maroon);
+      font-size: 1.8rem;
+      font-weight: normal;
+    }
 
-    .add-row, .field-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .add-row input[type="text"], textarea { flex: 1; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; background: #fff; }
-    textarea { width: 100%; height: 80px; resize: vertical; margin-bottom: 8px; }
+    .page-header .sub {
+      color: var(--gold);
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.95rem;
+    }
 
-    button { cursor: pointer; border: none; background: none; font-size: 0.9rem; }
-    .icon-btn-gold { background: var(--gold); color: #fff; padding: 10px 14px; border-radius: 6px; font-weight: 600; }
+    .page-header .desc {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .field-label {
+      font-family: var(--font-serif);
+      color: var(--maroon);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      display: block;
+      font-weight: bold;
+    }
+
+    .section-label {
+      font-family: var(--font-serif);
+      color: var(--maroon);
+      font-size: 1.1rem;
+      margin: 20px 0 10px 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background-color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--gold);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn-gold {
+      background-color: var(--gold);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .btn-gold:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .icon-btn-gold {
+      background: var(--gold);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      width: 42px;
+      height: 42px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     .icon-btn-gold:disabled { opacity: 0.5; }
 
-    .inter-row { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); }
-    .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--gold); }
-    .check-circle.done { background: var(--gold); color: #fff; }
+    .tts-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .inter-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .check-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--maroon);
+      font-weight: bold;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-circle.done {
+      background: var(--gold-light);
+    }
+
     .inter-text { flex: 1; font-size: 0.95rem; }
-    .inter-text.done { text-decoration: line-through; opacity: 0.6; }
-    .trash-btn { color: #999; font-size: 1.1rem; padding: 4px; }
+    .inter-text.done { text-decoration: line-through; color: var(--text-muted); }
 
-    .progress-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .progress-track { background: var(--border); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
-    .progress-fill { background: var(--gold); height: 100%; transition: width 0.3s ease; }
+    .trash-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+    }
 
-    .examen-step { display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
-    .step-badge { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-light); color: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; flex-shrink: 0; }
-    .step-badge.done { background: var(--gold); color: #fff; }
-    .step-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; }
-    .step-prompt { font-size: 0.85rem; color: var(--subtext); line-height: 1.3; }
-    .examen-done { text-align: center; padding: 16px; font-style: italic; color: var(--gold); font-weight: 500; }
+    .examen-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
 
-    .fleuron { text-align: center; color: var(--gold); font-size: 1.2rem; margin: 16px 0; }
-    .loading { text-align: center; padding: 16px; color: var(--subtext); font-size: 0.9rem; }
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; }
+    .examen-step.done {
+      border-color: var(--gold);
+      background: var(--gold-light);
+    }
+
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--maroon);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .step-badge.done {
+      background: var(--gold);
+    }
+
+    .step-title {
+      font-family: var(--font-serif);
+      color: var(--maroon);
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .step-title.done { text-decoration: line-through; opacity: 0.8; }
+    .step-prompt { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      background: var(--border);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-fill {
+      background: var(--maroon);
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .examen-done {
+      text-align: center;
+      padding: 16px;
+      color: var(--maroon);
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    .tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    }
+
+    .tabbar .rule {
+      height: 2px;
+      background: var(--gold);
+    }
+
+    .tabbar .row {
+      display: flex;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tabbar button {
+      flex: 1;
+      border: none;
+      background: none;
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .tabbar button.active {
+      color: var(--maroon);
+      font-weight: bold;
+    }
+
+    .tabbar button .icon { font-size: 1.2rem; }
+    .tabbar button .label { font-size: 0.75rem; margin-top: 2px; }
+
+    .fleuron {
+      text-align: center;
+      color: var(--gold);
+      margin: 16px 0;
+      font-size: 1.2rem;
+    }
+
+    .history-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .entry-title {
+      font-family: var(--font-serif);
+      color: var(--maroon);
+      font-weight: bold;
+    }
+
+    .entry-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sub-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: pre-wrap;
+      margin-top: 8px;
+    }
+
+    .celebration {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .cel-title {
+      font-family: var(--font-serif);
+      color: var(--maroon);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .cel-rank {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 20px 0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--maroon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
     @keyframes spin { to { transform: rotate(360deg); } }
-    .err-text { color: var(--accent); font-size: 0.85rem; margin-top: 8px; }
-
-    .tabbar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-    .tabbar .row { display: flex; max-width: 600px; margin: 0 auto; }
-    .tabbar button { flex: 1; padding: 8px 0; display: flex; flex-direction: column; align-items: center; color: var(--subtext); font-size: 0.75rem; }
-    .tabbar button.active { color: var(--accent); font-weight: 600; }
-    .tabbar .icon { font-size: 1.2rem; margin-bottom: 2px; }
-    .empty { text-align: center; padding: 20px; color: var(--subtext); font-style: italic; font-size: 0.9rem; }
+    .err-text { color: #b00020; font-size: 0.85rem; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -85,25 +438,74 @@
 <div id="app"></div>
 
 <script>
-/* ---------- State & Storage Helper ---------- */
+/* ---------- State & Utilities ---------- */
+const EXAMEN_STEPS = [
+  { n: 1, title: 'Presence of God', prompt: 'Become aware of God\'s loving presence with you right now.' },
+  { n: 2, title: 'Gratitude', prompt: 'Review the day and thank God for specific blessings and gifts.' },
+  { n: 3, title: 'Review', prompt: 'Notice where God was present, and where you turned away.' },
+  { n: 4, title: 'Forgiveness', prompt: 'Ask God for forgiveness for shortfalls and failures today.' },
+  { n: 5, title: 'Resolution', prompt: 'Look ahead to tomorrow and ask for grace to follow Him.' }
+];
+
+const RANK_LABEL = {
+  1: 'Solemnity', 2: 'Feast', 3: 'Memorial', 4: 'Optional Memorial', 5: 'Ferial'
+};
+
 const store = {
-  get: (k, def) => {
+  get(k, def) {
     try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
     catch(e) { return def; }
   },
-  set: (k, v) => {
+  set(k, v) {
     try { localStorage.setItem(k, JSON.stringify(v)); return true; }
     catch(e) { return false; }
   }
 };
 
+function esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function fmtDate(dStr) {
+  if(!dStr) return '';
+  const d = new Date(dStr + 'T00:00:00');
+  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function getPath(obj, path) {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
+function setPath(obj, path, val) {
+  const parts = path.split('.');
+  const last = parts.pop();
+  const target = parts.reduce((acc, part) => acc[part] = acc[part] || {}, obj);
+  target[last] = val;
+}
+
+async function fetchJSONResilient(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return { ok: false, status: res.status };
+    const json = await res.json();
+    return { ok: true, json };
+  } catch(e) {
+    return { ok: false, error: e };
+  }
+}
+
+/* ---------- App State ---------- */
 const state = {
   tab: 'lectio',
   lectio: {
-    passage: '',
-    notes: '',
-    expandedId: null,
-    items: store.get('lectio_items', [])
+    passage: '', lectioText: '', meditatio: '', oratio: '',
+    history: store.get('lectio_history', []),
+    expandedId: null, saving: false
   },
   inter: {
     text: '',
@@ -113,130 +515,108 @@ const state = {
     done: store.get('examen_' + todayKey(), {})
   },
   daily: {
-    saintLoading: false,
-    saintError: '',
-    saintData: null,
-    saintLoaded: false,
-    bibleQuery: '',
-    bibleLoading: false,
-    bibleError: '',
-    bibleResult: null
-  }
+    saintLoaded: false, saintLoading: false, saintError: '', saintData: null,
+    bibleQuery: '', bibleLoading: false, bibleError: '', bibleResult: null
+  },
+  tts: { playingKey: null }
 };
 
-const EXAMEN_STEPS = [
-  { n: 1, title: 'Presence', prompt: 'Become aware of God’s loving presence with you right now.' },
-  { n: 2, title: 'Gratitude', prompt: 'Review the day with gratitude. Note simple blessings and moments of light.' },
-  { n: 3, title: 'Review', prompt: 'Notice where you responded in love, and where stress or friction arose.' },
-  { n: 4, title: 'Forgiveness', prompt: 'Ask God for pardon for stumbles, trusting in His endless mercy.' },
-  { n: 5, title: 'Hope', prompt: 'Look forward to tomorrow with renewed faith and a quiet heart.' }
-];
-
-const RANK_LABEL = { feria: 'Weekday', memorial: 'Memorial', feast: 'Feast', solemnity: 'Solemnity' };
-
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function setPath(obj, path, val) {
-  const parts = path.split('.');
-  let curr = obj;
-  for (let i = 0; i < parts.length - 1; i++) {
-    curr = curr[parts[i]];
+/* ---------- Speech Synthesis ---------- */
+function toggleSpeak(key) {
+  if(!('speechSynthesis' in window)) return;
+  if(state.tts.playingKey === key) {
+    window.speechSynthesis.cancel();
+    state.tts.playingKey = null;
+    render();
+    return;
   }
-  curr[parts[parts.length - 1]] = val;
+  
+  window.speechSynthesis.cancel();
+  let text = '';
+
+  if(key === 'saint' && state.daily.saintData) {
+    const s = state.daily.saintData;
+    const cels = s.celebrations || [];
+    text = cels.map(c => c.title).join('. ');
+  } else if(key === 'bible' && state.daily.bibleResult) {
+    text = state.daily.bibleResult.reference + '. ' + state.daily.bibleResult.text;
+  }
+
+  if(text) {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.onend = () => { state.tts.playingKey = null; render(); };
+    utter.onerror = () => { state.tts.playingKey = null; render(); };
+    state.tts.playingKey = key;
+    window.speechSynthesis.speak(utter);
+    render();
+  }
 }
 
-function todayKey() {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+function ttsButton(key, opts = {}) {
+  const isPlaying = state.tts.playingKey === key;
+  const label = isPlaying ? 'Stop' : 'Listen';
+  return `<button class="tts-btn" data-action="tts" data-key="${key}">${isPlaying ? '&#9632;' : '&#9654;'} ${label}</button>`;
 }
 
-function fmtDate(dStr) {
-  if (!dStr) return '';
-  const d = new Date(dStr);
-  return d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function pageHeader(title, subtitle, note) {
-  return '<div class="page-header">'
-    + '<h1>' + esc(title) + '</h1>'
-    + '<h2>' + esc(subtitle) + '</h2>'
-    + (note ? '<p>' + esc(note) + '</p>' : '')
-    + '</div>';
+function pageHeader(title, sub, desc) {
+  return `<div class="page-header">
+    <h1>${title}</h1>
+    <div class="sub">${sub}</div>
+    ${desc ? `<div class="desc">${desc}</div>` : ''}
+  </div>`;
 }
 
 function fleuron() {
-  return '<div class="fleuron">&#10016;</div>';
-}
-
-function ttsButton(key, opts) {
-  return '<button class="icon-btn-gold" style="padding:4px 8px; font-size:0.75rem;" data-action="tts" data-key="' + key + '">&#128066; Read</button>';
-}
-
-function toggleSpeak(key) {
-  if ('speechSynthesis' in window) {
-    if (speechSynthesis.speaking) {
-      speechSynthesis.cancel();
-    } else {
-      let text = '';
-      if (key === 'saint' && state.daily.saintData) {
-        text = state.daily.saintData.celebrations.map(c => c.title).join('. ');
-      } else if (key === 'bible' && state.daily.bibleResult) {
-        text = state.daily.bibleResult.reference + '. ' + state.daily.bibleResult.text;
-      }
-      if (text) {
-        const ut = new SpeechSynthesisUtterance(text);
-        speechSynthesis.speak(ut);
-      }
-    }
-  }
-}
-
-async function fetchJSONResilient(url) {
-  try {
-    const res = await fetch(url);
-    const json = await res.json();
-    return { ok: res.ok, json: json };
-  } catch(e) {
-    return { ok: false, json: null };
-  }
+  return `<div class="fleuron">&#10086;</div>`;
 }
 
 /* ---------- Tab 1: Lectio Divina ---------- */
 function renderLectioTab() {
-  let html = pageHeader('Lectio Divina', 'Holy Scripture & Reflection', 'Read — Meditate — Pray — Rest');
+  const s = state.lectio;
+  const canSave = (s.passage + s.lectioText + s.meditatio + s.oratio).trim().length > 0;
+
+  let html = pageHeader('Lectio Divina', 'Divine Reading', 'Read, Meditate, Pray, Contemplate');
   html += '<div class="content">';
+
+  html += '<div class="card">';
+  html += '<label class="field-label">1. Lectio — Scripture Passage</label>';
+  html += '<input type="text" placeholder="e.g. John 15:1-5 or paste verse..." data-bind="lectio.passage" value="'+esc(s.passage)+'" style="margin-bottom:12px;">';
   
-  html += '<div class="card" style="padding:16px;">';
-  html += '<div class="field-label" style="margin-bottom:4px;">Scripture Passage</div>';
-  html += '<textarea placeholder="Paste passage or verse..." data-bind="lectio.passage">' + esc(state.lectio.passage) + '</textarea>';
-  html += '<div class="field-label" style="margin-bottom:4px;">Personal Reflection</div>';
-  html += '<textarea placeholder="What word or phrase strikes your heart today?..." data-bind="lectio.notes">' + esc(state.lectio.notes) + '</textarea>';
-  html += '<button class="icon-btn-gold" style="width:100%; margin-top:8px;" data-action="lectio-save">Save Reflection</button>';
+  html += '<label class="field-label">Reading Notes</label>';
+  html += '<textarea placeholder="What does the text say in itself?" data-bind="lectio.lectioText" style="margin-bottom:12px;">'+esc(s.lectioText)+'</textarea>';
+
+  html += '<label class="field-label">2. Meditatio — Reflection</label>';
+  html += '<textarea placeholder="What is God saying to me through this text?" data-bind="lectio.meditatio" style="margin-bottom:12px;">'+esc(s.meditatio)+'</textarea>';
+
+  html += '<label class="field-label">3. Oratio — Prayer</label>';
+  html += '<textarea placeholder="What do I say to the Lord in response?" data-bind="lectio.oratio" style="margin-bottom:16px;">'+esc(s.oratio)+'</textarea>';
+
+  html += '<button class="btn-gold" data-action="lectio-save" '+(canSave && !s.saving ? '' : 'disabled')+'>Save Journal Entry</button>';
   html += '</div>';
 
   html += fleuron();
-  html += '<div class="section-label">Past Reflections</div>';
 
-  if (!state.lectio.items.length) {
+  html += '<div class="section-label">Previous Reflections</div>';
+  if(!s.history.length) {
     html += '<div class="empty">No saved reflections yet.</div>';
   } else {
-    state.lectio.items.forEach(item => {
-      const exp = state.lectio.expandedId === item.id;
-      html += '<div class="card" style="padding:12px; margin-bottom:10px;">';
-      html += '<div class="add-row" data-action="lectio-toggle-entry" data-id="' + esc(item.id) + '" style="cursor:pointer;">';
-      html += '<div><div class="field-label">' + esc(item.date) + '</div><div class="sub-text">' + esc(item.passage.substring(0, 40)) + (item.passage.length > 40 ? '—' : '') + '</div></div>';
-      html += '<button class="trash-btn" data-action="lectio-delete" data-id="' + esc(item.id) + '">&#128465;</button>';
+    s.history.forEach(item => {
+      const isExp = s.expandedId === item.id;
+      html += '<div class="history-card">';
+      html += '<div class="entry-header" data-action="lectio-toggle-entry" data-id="'+item.id+'">';
+      html += '<div><div class="entry-title">'+esc(item.passage || 'Untitled Reflection')+'</div>';
+      html += '<div class="entry-date">'+fmtDate(item.date)+'</div></div>';
+      html += '<div>'+(isExp ? '&#9650;' : '&#9660;')+'</div>';
       html += '</div>';
-      if (exp) {
-        html += '<div style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">';
-        html += '<div class="sub-label">Passage</div><div class="sub-text">' + esc(item.passage) + '</div>';
-        if (item.notes) {
-          html += '<div class="sub-label">Notes</div><div class="sub-text">' + esc(item.notes) + '</div>';
-        }
-        html += '</div>';
+
+      if(isExp) {
+        html += '<div style="margin-top:12px; border-top:1px solid var(--border); padding-top:8px;">';
+        if(item.lectioText) html += '<div class="field-label" style="margin-top:6px;">Lectio:</div><div class="sub-text">'+esc(item.lectioText)+'</div>';
+        if(item.meditatio) html += '<div class="field-label" style="margin-top:6px;">Meditatio:</div><div class="sub-text">'+esc(item.meditatio)+'</div>';
+        if(item.oratio) html += '<div class="field-label" style="margin-top:6px;">Oratio:</div><div class="sub-text">'+esc(item.oratio)+'</div>';
+        html += '<div style="text-align:right; margin-top:8px;">';
+        html += '<button class="trash-btn" data-action="lectio-delete" data-id="'+item.id+'">&#128465; Delete</button>';
+        html += '</div></div>';
       }
       html += '</div>';
     });
@@ -247,215 +627,50 @@ function renderLectioTab() {
 }
 
 function saveLectioEntry() {
-  const p = state.lectio.passage.trim();
-  const n = state.lectio.notes.trim();
-  if (!p) return;
+  const s = state.lectio;
+  if(s.saving) return;
+  s.saving = true; render();
 
-  const newItem = { id: String(Date.now()), date: fmtDate(new Date()), passage: p, notes: n };
-  const next = [newItem, ...state.lectio.items];
-  if (store.set('lectio_items', next)) {
-    state.lectio.items = next;
-    state.lectio.passage = '';
-    state.lectio.notes = '';
-    render();
+  const entry = {
+    id: String(Date.now()),
+    date: todayKey(),
+    passage: s.passage.trim(),
+    lectioText: s.lectioText.trim(),
+    meditatio: s.meditatio.trim(),
+    oratio: s.oratio.trim()
+  };
+
+  const next = [entry, ...s.history];
+  if(store.set('lectio_history', next)) {
+    s.history = next;
+    s.passage = ''; s.lectioText = ''; s.meditatio = ''; s.oratio = '';
   }
+  s.saving = false;
+  render();
 }
 
 function deleteLectioEntry(id) {
-  const next = state.lectio.items.filter(item => item.id !== id);
-  if (store.set('lectio_items', next)) {
-    state.lectio.items = next;
+  const next = state.lectio.history.filter(h => h.id !== id);
+  if(store.set('lectio_history', next)) {
+    state.lectio.history = next;
+    if(state.lectio.expandedId === id) state.lectio.expandedId = null;
     render();
   }
 }
 
 /* ---------- Tab 2: Intercessions ---------- */
-function renderIntercessionsTab() {
+function renderIntercessionsTab(){
   const s = state.inter;
-  let html = pageHeader('Family & Intentions', 'Daily Prayers', 'Bring your petitions to the Lord');
+  let html = pageHeader('Intercessions', 'Prayer Intentions', 'Bring Your Requests to God');
   html += '<div class="content">';
 
-  html += '<div class="add-row" style="margin-bottom:16px;">'
-    + '<input type="text" placeholder="Add a intention or family prayer..." data-bind="inter.text" data-enter-action="intercession-add" value="' + esc(s.text) + '">'
-    + '<button class="icon-btn-gold" data-action="intercession-add"' + (!s.text.trim() ? ' disabled' : '') + '>Add</button>'
-    + '</div>';
-
-  html += '<div class="card">';
-  if (!s.items.length) {
-    html += '<div class="empty">No intercessions added yet.</div>';
-  } else {
-    s.items.forEach(item => {
-      html += '<div class="inter-row">';
-      html += '<button class="check-circle' + (item.done ? ' done' : '') + '" data-action="intercession-toggle" data-id="' + esc(item.id) + '">' + (item.done ? '&#10003;' : '') + '</button>';
-      html += '<div class="inter-text' + (item.done ? ' done' : '') + '">' + esc(item.text) + '</div>';
-      html += '<button class="trash-btn" data-action="intercession-delete" data-id="' + esc(item.id) + '">&#128465;</button>';
-      html += '</div>';
-    });
-  }
-  html += '</div>';
-  html += '</div>';
-  return html;
-}
-
-function addIntercession() {
-  const text = state.inter.text.trim();
-  if (!text) return;
-  const newItem = { id: String(Date.now()), text: text, done: false };
-  const next = [newItem, ...state.inter.items];
-  if (store.set('inter_items', next)) {
-    state.inter.items = next;
-    state.inter.text = '';
-    render();
-  }
-}
-
-function toggleIntercession(id) {
-  const next = state.inter.items.map(item => item.id === id ? { ...item, done: !item.done } : item);
-  if (store.set('inter_items', next)) {
-    state.inter.items = next;
-    render();
-  }
-}
-
-function deleteIntercession(id) {
-  const next = state.inter.items.filter(item => item.id !== id);
-  if (store.set('inter_items', next)) {
-    state.inter.items = next;
-    render();
-  }
-}
-
-/* ---------- Tab 3: Daily Examen ---------- */
-function renderExamenTab() {
-  const s = state.examen;
-  const completedCount = EXAMEN_STEPS.filter(step => s.done[step.n]).length;
-  const pct = Math.round((completedCount / EXAMEN_STEPS.length) * 100);
-
-  let html = pageHeader('Evening Prayer', 'Daily Examen', 'Mercy & Grace in Daily Family Life');
-  html += '<div class="content">';
-  html += '<div class="progress-row">'
-    + '<span class="field-label">Progress</span>'
-    + '<span class="field-hint" style="margin:0;">' + completedCount + ' of ' + EXAMEN_STEPS.length + ' Completed</span>'
-    + '</div>';
-  html += '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%;"></div></div>';
-
-  EXAMEN_STEPS.forEach(step => {
-    const isDone = !!s.done[step.n];
-    html += '<button class="examen-step' + (isDone ? ' done' : '') + '" data-action="examen-toggle" data-step="' + step.n + '">';
-    html += '<div class="step-badge' + (isDone ? ' done' : '') + '">' + (isDone ? '&#10003;' : step.n) + '</div>';
-    html += '<div>';
-    html += '<div class="step-title' + (isDone ? ' done' : '') + '">' + esc(step.title) + '</div>';
-    html += '<div class="step-prompt">' + esc(step.prompt) + '</div>';
-    html += '</div>';
-    html += '</button>';
-  });
-
-  if (completedCount === EXAMEN_STEPS.length) {
-    html += '<div class="examen-done">Examen complete for today. Rest in God\'s grace.</div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-
-function toggleExamenStep(stepNum) {
-  const current = state.examen.done;
-  const updated = { ...current, [stepNum]: !current[stepNum] };
-  const key = 'examen_' + todayKey();
-  if (store.set(key, updated)) {
-    state.examen.done = updated;
-    render();
-  }
-}
-
-/* ---------- Tab 4: Daily Liturgy & Scripture ---------- */
-function renderDailyTab() {
-  const s = state.daily;
-  let html = pageHeader('Liturgy & Scripture', 'Daily Bread', 'Walking Together in Everyday Faith');
-  html += '<div class="content">';
-
-  // Saint / Calendar Section
-  html += '<div class="section-label">Today\'s Liturgy</div>';
-  if (s.saintLoading) {
-    html += '<div class="loading"><div class="spinner"></div>Loading liturgical calendar&hellip;</div>';
-  } else if (s.saintError && !s.saintData) {
-    html += '<div class="err-text">' + esc(s.saintError) + ' <a href="#" class="retry" data-action="daily-fetch-saint">Retry</a></div>';
-  } else if (s.saintData) {
-    const d = s.saintData;
-    const cels = d.celebrations || [];
-    html += '<div class="card" style="padding:16px;">';
-    html += '<div class="field-row"><span class="entry-date" style="font-weight:600;">' + esc(fmtDate(d.date)) + '</span>' + ttsButton('saint', { compact: true }) + '</div>';
-    if (d.season) {
-      html += '<div class="sub-label">Season</div><div class="sub-text" style="text-transform:capitalize;">' + esc(d.season) + (d.season_week ? ' (Week ' + d.season_week + ')' : '') + '</div>';
-    }
-    if (cels.length) {
-      html += '<div class="sub-label">Celebrations & Saints</div>';
-      cels.forEach(c => {
-        html += '<div style="display:flex; align-items:center; gap:8px; margin-top:6px;">';
-        html += '<div style="width:10px; height:10px; border-radius:50%; background:' + (c.colour || 'var(--gold)') + ';"></div>';
-        html += '<div>';
-        html += '<div style="font-weight:600; font-size:0.95rem;">' + esc(c.title) + '</div>';
-        if (c.rank) html += '<div style="font-size:0.8rem; color:var(--subtext);">' + esc(RANK_LABEL[c.rank] || c.rank) + '</div>';
-        html += '</div></div>';
-      });
-    }
-
-    // Pastoral Pope Reflection Quote
-    html += '<div class="sub-label" style="margin-top:14px;">Daily Pastoral Reflection</div>';
-    html += '<div class="sub-text" style="font-style:italic; border-left:3px solid var(--gold); padding-left:10px; margin-top:4px;">';
-    html += '"The family is the cradle of human society and the home of true peace. Turn with confidence to prayer in daily domestic life, where strength is renewed."'
-    html += '<br><span style="font-style:normal; font-size:0.85em; opacity:0.8;">— Pope Leo XIV</span>';
-    html += '</div>';
-
-    html += '</div>';
-  }
-
-  html += fleuron();
-
-  // Scripture Search Section (RSV Translation)
-  html += '<div class="section-label">Scripture Lookup (RSV)</div>';
   html += '<div class="add-row">'
-    + '<input type="text" placeholder="e.g. Psalm 23 or John 3:16" data-bind="daily.bibleQuery" data-enter-action="daily-search-bible" value="' + esc(s.bibleQuery) + '">'
-    + '<button class="icon-btn-gold" data-action="daily-search-bible"' + (!s.bibleQuery.trim() || s.bibleLoading ? ' disabled' : '') + '>&#128065;</button>'
+    + '<input type="text" placeholder="Add a prayer intention..." data-bind="inter.text" data-enter-action="intercession-add" value="'+esc(s.text)+'">'
+    + '<button class="icon-btn-gold" data-action="intercession-add"'+(!s.text.trim()?' disabled':'')+'>+</button>'
     + '</div>';
 
-  if (s.bibleLoading) {
-    html += '<div class="loading"><div class="spinner"></div>Fetching scripture passage (RSV)&hellip;</div>';
-  } else if (s.bibleError) {
-    html += '<div class="err-text">' + esc(s.bibleError) + '</div>';
-  } else if (s.bibleResult) {
-    const r = s.bibleResult;
-    html += '<div class="card" style="padding:16px;">';
-    html += '<div class="field-row"><div class="entry-title" style="font-weight:600;">' + esc(r.reference) + ' (RSV)</div>' + ttsButton('bible', { compact: true }) + '</div>';
-    html += '<div class="sub-text" style="margin-top:10px;">' + esc(r.text) + '</div>';
-    html += '</div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-
-async function fetchSaintData() {
-  state.daily.saintLoading = true;
-  state.daily.saintError = '';
-  render();
-
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = String(today.getMonth() + 1).padStart(2, '0');
-  const d = String(today.getDate()).padStart(2, '0');
-
-  try {
-    const url = `https://calapi.inadiutorium.cz/api/v0/en/calendars/general-en/${y}/${m}/${d}`;
-    const res = await fetchJSONResilient(url);
-    if (res.ok && res.json) {
-      state.daily.saintData = res.json;
-      state.daily.saintLoaded = true;
-    } else {
-      throw new Error('API unreachable');
-    }
-  } catch (err) {
-     <div class="empty">No intentions added yet. Write a prayer intention above to begin.</div>';
+  if(!s.items.length){
+    html += '<div class="empty">No intentions added yet. Write a prayer intention above to begin.</div>';
   } else {
     s.items.forEach(item => {
       html += '<div class="inter-row">'
@@ -485,6 +700,8 @@ function renderExamenTab(){
     + '</div>'
     + '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
 
+
+    
   EXAMEN_STEPS.forEach(step => {
     const isDone = !!s.done[step.n];
     html += '<button class="examen-step'+(isDone?' done':'')+'" data-action="examen-toggle" data-step="'+step.n+'">'
@@ -502,9 +719,10 @@ function renderExamenTab(){
 
   html += '</div>';
   return html;
-}
+  }
 
-/* ---------- Tab 4: Daily Readings & Calendar ---------- */
+
+                       /* ---------- Tab 4: Daily Readings & Calendar ---------- */
 function renderDailyTab(){
   const d = state.daily;
   let html = pageHeader('Daily Readings','Feasts &amp; Scripture','Daily Bread');
