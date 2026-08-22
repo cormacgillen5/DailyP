@@ -795,7 +795,7 @@ async function loadSaintData(){
   const day = String(dateObj.getDate()).padStart(2,'0');
 
   // Primary API with a fallback proxy
-  const primaryUrl = `https://calapi.inadiutorium.cz/api/v0/en/calendars/default/${y}/${m}/${day}`;
+  const primaryUrl = `https://calapi.inadiutorium.cz/api/v0/en/calendars/ireland/${y}/${m}/${day}`;
   const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(primaryUrl)}`;
 
   try {
