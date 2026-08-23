@@ -708,28 +708,35 @@ async function loadSaintData(){
     d.saintLoading = false; render();
   }
 }
-
 async function fetchRSSFeed(){
   const d = state.daily;
   if(d.rssLoading) return;
   d.rssLoading = true; d.rssError = ''; render();
 
-  const feedUrl = encodeURIComponent("https://universalis.com/v3/3day.xml");
+  // Updated to use the 3-day Atom feed URL
+  const feedUrl = encodeURIComponent("https://universalis.com/atom3day.xml");
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`;
 
   try {
     const res = await fetchJSONResilient(apiUrl);
     if(res.ok && res.json && res.json.status === 'ok'){
-      d.rssItems = res.json.items;
+      // Map properties to support both Atom (entry/content/updated) and RSS (item/description/pubDate)
+      d.rssItems = (res.json.items || []).map(item => ({
+        title: item.title || 'Daily Reading',
+        pubDate: item.pubDate || item.updated || '',
+        description: item.content || item.description || item.summary || ''
+      }));
       d.rssLoaded = true;
     } else {
-      d.rssError = 'Unable to load RSS readings.';
+      d.rssError = 'Unable to load Universalis readings.';
     }
   } catch(e) {
-    d.rssError = 'Error fetching RSS feed.';
+    d.rssError = 'Error fetching daily feed.';
   } finally {
-    d.rssLoading = false; render();
+    d.rssLoading = false; 
+    render();
   }
+
 }
 
 async function searchBible(){
