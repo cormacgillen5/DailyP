@@ -349,6 +349,16 @@
     .cel-title { font-family: var(--font-serif); color: var(--maroon); font-weight: bold; font-size: 1rem; }
     .cel-rank { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
 
+    .link-btn {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--maroon);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .link-btn:hover { text-decoration: underline; }
+
     .empty { text-align: center; color: var(--text-muted); font-style: italic; padding: 20px 0; }
     .loading { text-align: center; padding: 20px; color: var(--text-muted); }
 
@@ -366,7 +376,7 @@
     .err-text { color: #b00020; font-size: 0.85rem; margin-top: 4px; }
   </style>
 </head>
-<body>
+  <body>
 
 <div id="app"></div>
 <script>
@@ -443,6 +453,7 @@ const state = {
   daily: {
     saintLoaded: false, saintLoading: false, saintError: '', saintData: null,
     rssLoaded: false, rssLoading: false, rssError: '', rssItems: [],
+    videoLoaded: false, videoLoading: false, videoError: '', videoItems: [],
     bibleQuery: '', bibleLoading: false, bibleError: '', bibleResult: null
   },
   tts: { playingKey: null }
@@ -497,6 +508,7 @@ function fleuron() {
   return `<div class="fleuron">&#10086;</div>`;
 }
 
+  <script>
 /* ---------- Tab 1: Lectio Divina ---------- */
 function renderLectioTab() {
   const s = state.lectio;
@@ -614,7 +626,8 @@ function renderExamenTab(){
   html += '</div>';
   return html;
 }
-  /* ---------- Tab 4: Daily Readings & Calendar ---------- */
+
+/* ---------- Tab 4: Daily Readings & Calendar ---------- */
 function renderDailyTab(){
   const d = state.daily;
   let html = pageHeader('Daily Readings','Feasts &amp; Scripture','Daily Bread');
@@ -623,251 +636,12 @@ function renderDailyTab(){
   if(d.saintLoading){
     html += '<div class="loading"><div class="spinner"></div> Loading liturgical feast&hellip;</div>';
   } else if(d.saintError){
-    html += '<div class="err-text">'+esc(d.saintError)+' <a href="#" class="retry" data-action="saint-fetch">Retry</a></div>';
-  } else if(d.saintData){
-    const s = d.saintData;
-    const cels = s.celebrations || [];
-    html += '<div class="card" style="padding:16px; margin-top:8px;">';
-    html += '<div class="entry-date" style="margin-bottom:6px;">'+esc(fmtDate(s.date))+(s.season ? ' &middot; '+esc(s.season) : '')+'</div>';
-    if(cels.length){
-      cels.forEach((c, idx)=>{
-        html += '<div class="celebration" style="'+(idx>0?'margin-top:12px;':'')+'">';
-        html += '<div class="dot" style="background:'+(c.color||'var(--gold)')+'"></div>';
-        html += '<div><div class="cel-title">'+esc(c.title)+'</div>';
-        if(c.rank) html += '<div class="cel-rank">'+esc(RANK_LABEL[c.rank]||c.rank)+'</div>';
-        html += '</div></div>';
-      });
-    } else {
-      html += '<div class="cel-title">Ferial Day</div>';
-    }
-    html += '</div>';
+    html += '<div class="err-text">'+esc(d.saintError)+'</div>';
   }
-
-  html += fleuron() + '<div class="section-label">Universalis Mass Readings (RSS)</div>';
-  if(d.rssLoading){
-    html += '<div class="loading"><div class="spinner"></div> Fetching RSS Feed&hellip;</div>';
-  } else if(d.rssError){
-    html += '<div class="err-text">'+esc(d.rssError)+' <a href="#" class="retry" data-action="rss-fetch">Retry</a></div>';
-  } else if(d.rssItems.length){
-    d.rssItems.forEach(item => {
-      html += '<div class="card" style="padding:16px; margin-top:8px;">';
-      html += '<div class="cel-title">'+esc(item.title)+'</div>';
-      html += '<div class="entry-date" style="margin-bottom:8px;">'+esc(fmtDate(item.pubDate))+'</div>';
-      html += '<div class="sub-text">'+item.description+'</div></div>';
-    });
-  }
-
-  html += fleuron() + '<div class="section-label">Scripture Lookup</div>';
-  html += '<div class="add-row">'
-    + '<input type="text" placeholder="e.g. John 3:16, Psalm 23" data-bind="daily.bibleQuery" data-enter-action="bible-search" value="'+esc(d.bibleQuery)+'">'
-    + '<button class="icon-btn-gold" data-action="bible-search"'+(!d.bibleQuery.trim()||d.bibleLoading?' disabled':'')+'>&#128065;</button></div>';
-
-  if(d.bibleLoading){
-    html += '<div class="loading"><div class="spinner"></div> Searching Scripture&hellip;</div>';
-  } else if(d.bibleError){
-    html += '<div class="err-text">'+esc(d.bibleError)+'</div>';
-  } else if(d.bibleResult){
-    const r = d.bibleResult;
-    html += '<div class="card" style="padding:16px;">';
-    html += '<div class="field-row" style="margin-bottom:8px;"><div class="entry-title" style="color:var(--maroon);">'+esc(r.reference)+'</div>'+ttsButton('bible')+'</div>';
-    html += '<div class="sub-text">'+esc(r.text.trim())+'</div></div>';
-  }
-
   html += '</div>';
   return html;
 }
-
-/* ---------- API Fetching Helpers ---------- */
-async function loadSaintData(){
-  const d = state.daily;
-  if(d.saintLoading) return;
-  d.saintLoading = true; d.saintError = ''; render();
-  
-  const dateObj = new Date();
-  const y = dateObj.getFullYear();
-  const m = String(dateObj.getMonth()+1).padStart(2,'0');
-  const day = String(dateObj.getDate()).padStart(2,'0');
-
-  const primaryUrl = `https://calapi.inadiutorium.cz/api/v0/en/calendars/ireland/${y}/${m}/${day}`;
-  const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(primaryUrl)}`;
-
-  try {
-    let res = await fetchJSONResilient(primaryUrl);
-    if(!res.ok || !res.json){ res = await fetchJSONResilient(backupUrl); }
-
-    if(res.ok && res.json){
-      d.saintData = res.json;
-      d.saintLoaded = true;
-    } else {
-      d.saintData = { date: `${y}-${m}-${day}`, season: "Ordinary Time", celebrations: [{ title: "Ferial Day / Today's Liturgy", rank: "ferial", color: "green" }] };
-      d.saintLoaded = true;
-    }
-  } catch(e) {
-    d.saintError = 'Unable to fetch calendar data right now.';
-  } finally {
-    d.saintLoading = false; render();
-  }
-}
-async function fetchRSSFeed(){
-  const d = state.daily;
-  if(d.rssLoading) return;
-  d.rssLoading = true; d.rssError = ''; render();
-
-  // Updated to use the 3-day Atom feed URL
-  const feedUrl = encodeURIComponent("https://universalis.com/atom3day.xml");
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`;
-
-  try {
-    const res = await fetchJSONResilient(apiUrl);
-    if(res.ok && res.json && res.json.status === 'ok'){
-      // Map properties to support both Atom (entry/content/updated) and RSS (item/description/pubDate)
-      d.rssItems = (res.json.items || []).map(item => ({
-        title: item.title || 'Daily Reading',
-        pubDate: item.pubDate || item.updated || '',
-        description: item.content || item.description || item.summary || ''
-      }));
-      d.rssLoaded = true;
-    } else {
-      d.rssError = 'Unable to load Universalis readings.';
-    }
-  } catch(e) {
-    d.rssError = 'Error fetching daily feed.';
-  } finally {
-    d.rssLoading = false; 
-    render();
-  }
-
-}
-
-async function searchBible(){
-  const d = state.daily;
-  const q = d.bibleQuery.trim();
-  if(!q || d.bibleLoading) return;
-
-  d.bibleLoading = true; d.bibleError = ''; d.bibleResult = null; render();
-
-  try {
-    const res = await fetchJSONResilient(`https://bible-api.com/${encodeURIComponent(q)}`);
-    if(res.ok && res.json && res.json.text){
-      d.bibleResult = res.json;
-    } else {
-      d.bibleError = 'Passage not found. Try format e.g. "John 3:16" or "Psalm 23".';
-    }
-  } catch(e) {
-    d.bibleError = 'Network error fetching verse.';
-  } finally {
-    d.bibleLoading = false; render();
-  }
-}
-
-/* ---------- Main Render & Interactivity ---------- */
-function render(){
-  const app = document.getElementById('app');
-  let content = '';
-
-  if(state.tab === 'lectio') content = renderLectioTab();
-  else if(state.tab === 'inter') content = renderIntercessionsTab();
-  else if(state.tab === 'examen') content = renderExamenTab();
-  else if(state.tab === 'daily') content = renderDailyTab();
-
-  const tabs = [
-    { id:'lectio', label:'Lectio', icon:'&#128214;' },
-    { id:'inter', label:'Prayers', icon:'&#128591;' },
-    { id:'examen', label:'Examen', icon:'&#9728;' },
-    { id:'daily', label:'Daily', icon:'&#10013;' }
-  ];
-
-  let nav = '<nav class="tabbar"><div class="rule"></div><div class="row">';
-  tabs.forEach(t => {
-    const active = state.tab === t.id ? ' class="active"' : '';
-    nav += '<button'+active+' data-action="switch-tab" data-tab="'+t.id+'"><span class="icon">'+t.icon+'</span><span class="label">'+t.label+'</span></button>';
-  });
-  nav += '</div></nav>';
-
-  app.innerHTML = '<div class="banner"><span>In the morning Lord I praise You</span></div><div class="wrap">' + content + '</div>' + nav;
-
-  if(state.tab === 'daily'){
-    if(!state.daily.saintLoaded && !state.daily.saintLoading) loadSaintData();
-    if(!state.daily.rssLoaded && !state.daily.rssLoading) fetchRSSFeed();
-  }
-}
-
-/* ---------- Event Delegation ---------- */
-document.addEventListener('input', e => {
-  const path = e.target.getAttribute('data-bind');
-  if(path){
-    setPath(state, path, e.target.value);
-    if(state.tab === 'lectio') {
-      const btn = document.querySelector('[data-action="lectio-save"]');
-      if(btn){
-        const canSave = (state.lectio.passage + state.lectio.lectioText + state.lectio.meditatio + state.lectio.oratio).trim().length > 0;
-        btn.disabled = !canSave || state.lectio.saving;
-      }
-    }
-  }
-});
-
-document.addEventListener('keydown', e => {
-  if(e.key === 'Enter'){
-    const action = e.target.getAttribute('data-enter-action');
-    if(action === 'intercession-add'){
-      e.preventDefault();
-      const txt = state.inter.text.trim();
-      if(txt){
-        const next = [{ id: String(Date.now()), text: txt, done: false }, ...state.inter.items];
-        if(store.set('inter_items', next)){ state.inter.items = next; state.inter.text = ''; render(); }
-      }
-    } else if(action === 'bible-search'){
-      e.preventDefault();
-      searchBible();
-    }
-  }
-});
-
-document.addEventListener('click', e => {
-  const btn = e.target.closest('[data-action]');
-  if(!btn) return;
-  const action = btn.getAttribute('data-action');
-
-  if(action === 'switch-tab'){ state.tab = btn.getAttribute('data-tab'); render(); }
-  else if(action === 'tts'){ toggleSpeak(btn.getAttribute('data-key')); }
-  else if(action === 'lectio-save'){ saveLectioEntry(); }
-  else if(action === 'lectio-toggle-entry'){
-    const id = btn.getAttribute('data-id');
-    state.lectio.expandedId = state.lectio.expandedId === id ? null : id;
-    render();
-  }
-  else if(action === 'lectio-delete'){ deleteLectioEntry(btn.getAttribute('data-id')); }
-  else if(action === 'intercession-add'){
-    const txt = state.inter.text.trim();
-    if(txt){
-      const next = [{ id: String(Date.now()), text: txt, done: false }, ...state.inter.items];
-      if(store.set('inter_items', next)){ state.inter.items = next; state.inter.text = ''; render(); }
-    }
-  }
-  else if(action === 'intercession-toggle'){
-    const id = btn.getAttribute('data-id');
-    const next = state.inter.items.map(i => i.id === id ? { ...i, done: !i.done } : i);
-    if(store.set('inter_items', next)){ state.inter.items = next; render(); }
-  }
-  else if(action === 'intercession-delete'){
-    const id = btn.getAttribute('data-id');
-    const next = state.inter.items.filter(i => i.id !== id);
-    if(store.set('inter_items', next)){ state.inter.items = next; render(); }
-  }
-  else if(action === 'examen-toggle'){
-    const step = btn.getAttribute('data-step');
-    const key = 'examen_' + todayKey();
-    const cur = { ...state.examen.done };
-    cur[step] = !cur[step];
-    if(store.set(key, cur)){ state.examen.done = cur; render(); }
-  }
-  else if(action === 'saint-fetch'){ e.preventDefault(); loadSaintData(); }
-  else if(action === 'rss-fetch'){ e.preventDefault(); fetchRSSFeed(); }
-  else if(action === 'bible-search'){ searchBible(); }
-});
-
-render();
 </script>
 </body>
 </html>
+
