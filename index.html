@@ -1,875 +1,371 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Devotional</title>
+  <title>Catholic Devotional & News Dashboard</title>
   <style>
     :root {
-      --bg: #fbf7f0;
+      --primary: #2c3e50;
+      --accent: #8e44ad;
+      --light-bg: #f8f9fa;
       --card-bg: #ffffff;
-      --border: #e2d7c5;
-      --maroon: #6b1d2f;
-      --gold: #b38f4f;
-      --gold-light: #f5eedc;
-      --text: #2c2523;
-      --text-muted: #7a6e67;
-      --shadow: 0 4px 12px rgba(107, 29, 47, 0.05);
-      --font-serif: "Georgia", "Times New Roman", serif;
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --text: #333333;
+      --text-muted: #6c757d;
+      --border: #e9ecef;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
     body {
-      background-color: var(--bg);
+      background-color: var(--light-bg);
       color: var(--text);
-      font-family: var(--font-sans);
-      line-height: 1.5;
-      padding-bottom: 80px;
-      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
     }
 
-    .banner {
-      background-color: var(--maroon);
-      color: var(--gold-light);
-      text-align: center;
-      padding: 6px 12px;
-      font-family: var(--font-serif);
-      font-size: 0.8rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--gold);
-    }
-
-    .wrap {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    .page-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .page-header h1 {
-      font-family: var(--font-serif);
-      color: var(--maroon);
-      font-size: 1.8rem;
-      font-weight: normal;
-    }
-
-    .page-header .sub {
-      color: var(--gold);
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 0.95rem;
-    }
-
-    .page-header .desc {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-top: 4px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .field-label {
-      font-family: var(--font-serif);
-      color: var(--maroon);
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      display: block;
-      font-weight: bold;
-    }
-
-    .section-label {
-      font-family: var(--font-serif);
-      color: var(--maroon);
-      font-size: 1.1rem;
-      margin: 20px 0 10px 0;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 4px;
-    }
-
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background-color: #fff;
-      font-family: inherit;
-      font-size: 0.95rem;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input[type="text"]:focus, textarea:focus {
-      border-color: var(--gold);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .btn-gold {
-      background-color: var(--gold);
+    header {
+      background-color: var(--primary);
       color: #fff;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #1a252f;
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .tab-btn {
+      background: transparent;
       border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
+      color: #bdc3c7;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      width: 100%;
-      font-size: 0.95rem;
-      transition: background 0.2s;
-    }
-
-    .btn-gold:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .icon-btn-gold {
-      background: var(--gold);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      width: 42px;
-      height: 42px;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .icon-btn-gold:disabled { opacity: 0.5; }
-
-    .tts-btn {
-      background: transparent;
-      border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 4px 8px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background-color: var(--accent);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Sub-filters for News */
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Grid Layouts */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+    }
+
+    .card h2, .card h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .card h3 a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .card h3 a:hover {
+      text-decoration: underline;
+    }
+
+    .card-date {
       font-size: 0.8rem;
       color: var(--text-muted);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      margin-bottom: 0.75rem;
+      display: block;
     }
 
-    .add-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .field-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .inter-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-
-    .check-circle {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--maroon);
-      font-weight: bold;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .check-circle.done { background: var(--gold-light); }
-    .inter-text { flex: 1; font-size: 0.95rem; }
-    .inter-text.done { text-decoration: line-through; color: var(--text-muted); }
-
-    .trash-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 4px;
-    }
-
-    .examen-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 8px;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .examen-step.done {
-      border-color: var(--gold);
-      background: var(--gold-light);
-    }
-
-    .step-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--maroon);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
-    .step-badge.done { background: var(--gold); }
-
-    .step-title {
-      font-family: var(--font-serif);
-      color: var(--maroon);
-      font-weight: bold;
+    .card p {
       font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #4a5568;
     }
 
-    .step-title.done { text-decoration: line-through; opacity: 0.8; }
-    .step-prompt { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
-
-    .progress-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
+    .read-more {
+      margin-top: auto;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
     }
 
-    .progress-track {
-      background: var(--border);
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .progress-fill {
-      background: var(--maroon);
-      height: 100%;
-      transition: width 0.3s ease;
-    }
-
-    .examen-done {
-      text-align: center;
-      padding: 16px;
-      color: var(--maroon);
-      font-family: var(--font-serif);
+    .loading {
+      color: var(--text-muted);
       font-style: italic;
     }
 
-    .tabbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--card-bg);
-      border-top: 1px solid var(--border);
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    .error {
+      color: #e74c3c;
     }
-
-    .tabbar .rule { height: 2px; background: var(--gold); }
-    .tabbar .row { display: flex; max-width: 600px; margin: 0 auto; }
-
-    .tabbar button {
-      flex: 1;
-      border: none;
-      background: none;
-      padding: 8px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-
-    .tabbar button.active { color: var(--maroon); font-weight: bold; }
-    .tabbar button .icon { font-size: 1.2rem; }
-    .tabbar button .label { font-size: 0.75rem; margin-top: 2px; }
-
-    .fleuron {
-      text-align: center;
-      color: var(--gold);
-      margin: 16px 0;
-      font-size: 1.2rem;
-    }
-
-    .history-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 8px;
-    }
-
-    .entry-header { display: flex; justify-content: space-between; cursor: pointer; }
-    .entry-title { font-family: var(--font-serif); color: var(--maroon); font-weight: bold; }
-    .entry-date { font-size: 0.8rem; color: var(--text-muted); }
-    .sub-text { font-size: 0.9rem; color: var(--text); white-space: pre-wrap; margin-top: 8px; }
-
-    .celebration { display: flex; align-items: center; gap: 10px; }
-    .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-    .cel-title { font-family: var(--font-serif); color: var(--maroon); font-weight: bold; font-size: 1rem; }
-    .cel-rank { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-
-    .empty { text-align: center; color: var(--text-muted); font-style: italic; padding: 20px 0; }
-    .loading { text-align: center; padding: 20px; color: var(--text-muted); }
-
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid var(--border);
-      border-top-color: var(--maroon);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .err-text { color: #b00020; font-size: 0.85rem; margin-top: 4px; }
   </style>
 </head>
 <body>
 
-<div id="app"></div>
-<script>
-/* ---------- State & Utilities ---------- */
-const EXAMEN_STEPS = [
-  { n: 1, title: 'Presence of God', prompt: 'Become aware of God\'s loving presence with you right now.' },
-  { n: 2, title: 'Gratitude', prompt: 'Review the day and thank God for specific blessings and gifts.' },
-  { n: 3, title: 'Review', prompt: 'Notice where God was present, and where you turned away.' },
-  { n: 4, title: 'Forgiveness', prompt: 'Ask God for forgiveness for shortfalls and failures today.' },
-  { n: 5, title: 'Resolution', prompt: 'Look ahead to tomorrow and ask for grace to follow Him.' }
-];
+  <header>
+    <h1>Catholic Daily Devotional & News</h1>
+  </header>
 
-const RANK_LABEL = { 1: 'Solemnity', 2: 'Feast', 3: 'Memorial', 4: 'Optional Memorial', 5: 'Ferial' };
+  <nav>
+    <button class="tab-btn active" onclick="switchTab('dashboard')">Daily Devotional</button>
+    <button class="tab-btn" onclick="switchTab('news')">Catholic News & Media</button>
+    <button class="tab-btn" onclick="switchTab('readings')">Daily Readings</button>
+  </nav>
 
-const store = {
-  get(k, def) {
-    try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
-    catch(e) { return def; }
-  },
-  set(k, v) {
-    try { localStorage.setItem(k, JSON.stringify(v)); return true; }
-    catch(e) { return false; }
-  }
-};
+  <main class="container">
 
-function esc(s) {
-  return String(s || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
-}
+    <!-- DASHBOARD TAB -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="grid-2col">
+        <section>
+          <div class="card">
+            <h2>Welcome</h2>
+            <p>Select a tab above to browse Catholic news updates, daily Mass readings, or daily prayers and saint reflections provided by Catholic Online feeds.</p>
+          </div>
+        </section>
 
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
+        <!-- Daily Sidebar Widgets -->
+        <aside>
+          <div class="card">
+            <h2>Saint of the Day</h2>
+            <div id="widget-sofd" class="loading">Loading Saint of the Day...</div>
+          </div>
 
-function fmtDate(dStr) {
-  if(!dStr) return '';
-  const d = new Date(dStr.includes('T') ? dStr : dStr + 'T00:00:00');
-  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-}
+          <div class="card">
+            <h2>Prayer of the Day</h2>
+            <div id="widget-pofd" class="loading">Loading Prayer of the Day...</div>
+          </div>
+        </aside>
+      </div>
+    </div>
 
-function setPath(obj, path, val) {
-  const parts = path.split('.');
-  const last = parts.pop();
-  const target = parts.reduce((acc, part) => acc[part] = acc[part] || {}, obj);
-  target[last] = val;
-}
+    <!-- NEWS & MEDIA TAB -->
+    <div id="tab-news" class="tab-content">
+      <div class="filter-bar">
+        <button id="filter-news" class="filter-btn active" onclick="loadNewsFeed('news')">General News</button>
+        <button id="filter-video" class="filter-btn" onclick="loadNewsFeed('video')">Video Feed</button>
+      </div>
+      <div id="news-container" class="news-grid">
+        <p class="loading">Loading news feed...</p>
+      </div>
+    </div>
 
-async function fetchJSONResilient(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return { ok: false, status: res.status };
-    const json = await res.json();
-    return { ok: true, json };
-  } catch(e) {
-    return { ok: false, error: e };
-  }
-}
+    <!-- READINGS TAB -->
+    <div id="tab-readings" class="tab-content">
+      <div class="card">
+        <h2>Daily Mass Readings</h2>
+        <div id="readings-container" class="loading">Loading today's readings...</div>
+      </div>
+    </div>
 
-/* ---------- App State ---------- */
-const state = {
-  tab: 'lectio',
-  lectio: {
-    passage: '', lectioText: '', meditatio: '', oratio: '',
-    history: store.get('lectio_history', []),
-    expandedId: null, saving: false
-  },
-  inter: {
-    text: '',
-    items: store.get('inter_items', [])
-  },
-  examen: {
-    done: store.get('examen_' + todayKey(), {})
-  },
-  daily: {
-    saintLoaded: false, saintLoading: false, saintError: '', saintData: null,
-    rssLoaded: false, rssLoading: false, rssError: '', rssItems: [],
-    bibleQuery: '', bibleLoading: false, bibleError: '', bibleResult: null
-  },
-  tts: { playingKey: null }
-};
+  </main>
 
-/* ---------- Speech Synthesis ---------- */
-function toggleSpeak(key) {
-  if(!('speechSynthesis' in window)) return;
-  if(state.tts.playingKey === key) {
-    window.speechSynthesis.cancel();
-    state.tts.playingKey = null;
-    render();
-    return;
-  }
-  
-  window.speechSynthesis.cancel();
-  let text = '';
+  <script>
+    const FEEDS = {
+      pofd: 'https://www.catholic.org/xml/rss_pofd.php',
+      video: 'https://www.catholic.org/xml/rss_video.php',
+      sofd: 'https://www.catholic.org/xml/rss_sofd.php',
+      readings: 'https://www.catholic.org/xml/rss_dailyreadings.php',
+      news: 'https://www.catholic.org/xml/rss_news.php'
+    };
 
-  if(key === 'saint' && state.daily.saintData) {
-    const s = state.daily.saintData;
-    const cels = s.celebrations || [];
-    text = cels.map(c => c.title).join('. ');
-  } else if(key === 'bible' && state.daily.bibleResult) {
-    text = state.daily.bibleResult.reference + '. ' + state.daily.bibleResult.text;
-  }
+    // Tab Navigation Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-  if(text) {
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.onend = () => { state.tts.playingKey = null; render(); };
-    utter.onerror = () => { state.tts.playingKey = null; render(); };
-    state.tts.playingKey = key;
-    window.speechSynthesis.speak(utter);
-    render();
-  }
-}
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      event.currentTarget.classList.add('active');
 
-function ttsButton(key) {
-  const isPlaying = state.tts.playingKey === key;
-  const label = isPlaying ? 'Stop' : 'Listen';
-  return `<button class="tts-btn" data-action="tts" data-key="${key}">${isPlaying ? '■' : '▶'} ${label}</button>`;
-}
-
-function pageHeader(title, sub, desc) {
-  return `<div class="page-header">
-    <h1>${title}</h1>
-    <div class="sub">${sub}</div>
-    ${desc ? `<div class="desc">${desc}</div>` : ''}
-  </div>`;
-}
-
-function fleuron() {
-  return `<div class="fleuron">❦</div>`;
-}
-
-/* ---------- Tab 1: Lectio Divina ---------- */
-function renderLectioTab() {
-  const s = state.lectio;
-  const canSave = (s.passage + s.lectioText + s.meditatio + s.oratio).trim().length > 0;
-
-  let html = pageHeader('Lectio Divina', 'Divine Reading', 'Read, Meditate, Pray, Contemplate');
-  html += '<div class="content"><div class="card">';
-  html += '<label class="field-label">1. Lectio — Scripture Passage</label>';
-  html += '<input type="text" placeholder="e.g. John 15:1-5 or paste verse..." data-bind="lectio.passage" value="'+esc(s.passage)+'" style="margin-bottom:12px;">';
-  
-  html += '<label class="field-label">Reading Notes</label>';
-  html += '<textarea placeholder="What does the text say in itself?" data-bind="lectio.lectioText" style="margin-bottom:12px;">'+esc(s.lectioText)+'</textarea>';
-
-  html += '<label class="field-label">2. Meditatio — Reflection</label>';
-  html += '<textarea placeholder="What is God saying to me through this text?" data-bind="lectio.meditatio" style="margin-bottom:12px;">'+esc(s.meditatio)+'</textarea>';
-
-  html += '<label class="field-label">3. Oratio — Prayer</label>';
-  html += '<textarea placeholder="What do I say to the Lord in response?" data-bind="lectio.oratio" style="margin-bottom:16px;">'+esc(s.oratio)+'</textarea>';
-
-  html += '<button class="btn-gold" data-action="lectio-save" '+(canSave && !s.saving ? '' : 'disabled')+'>Save Journal Entry</button></div>';
-
-  html += fleuron() + '<div class="section-label">Previous Reflections</div>';
-  if(!s.history.length) {
-    html += '<div class="empty">No saved reflections yet.</div>';
-  } else {
-    s.history.forEach(item => {
-      const isExp = s.expandedId === item.id;
-      html += '<div class="history-card">';
-      html += '<div class="entry-header" data-action="lectio-toggle-entry" data-id="'+item.id+'">';
-      html += '<div><div class="entry-title">'+esc(item.passage || 'Untitled Reflection')+'</div>';
-      html += '<div class="entry-date">'+fmtDate(item.date)+'</div></div>';
-      html += '<div>'+(isExp ? '▲' : '▼')+'</div></div>';
-
-      if(isExp) {
-        html += '<div style="margin-top:12px; border-top:1px solid var(--border); padding-top:8px;">';
-        if(item.lectioText) html += '<div class="field-label" style="margin-top:6px;">Lectio:</div><div class="sub-text">'+esc(item.lectioText)+'</div>';
-        if(item.meditatio) html += '<div class="field-label" style="margin-top:6px;">Meditatio:</div><div class="sub-text">'+esc(item.meditatio)+'</div>';
-        if(item.oratio) html += '<div class="field-label" style="margin-top:6px;">Oratio:</div><div class="sub-text">'+esc(item.oratio)+'</div>';
-        html += '<div style="text-align:right; margin-top:8px;"><button class="trash-btn" data-action="lectio-delete" data-id="'+item.id+'">&#128465; Delete</button></div></div>';
+      // Lazy load tab data on demand
+      if (tabId === 'news' && !document.getElementById('news-container').dataset.loaded) {
+        loadNewsFeed('news');
+      } else if (tabId === 'readings' && !document.getElementById('readings-container').dataset.loaded) {
+        fetchFeed('readings', renderReadings);
       }
-      html += '</div>';
-    });
-  }
-  html += '</div>';
-  return html;
-}
+    }
 
-function saveLectioEntry() {
-  const s = state.lectio;
-  if(s.saving) return;
-  s.saving = true; render();
+    // Utility: Clean HTML tags from RSS item descriptions
+    function cleanSnippet(html, length = 160) {
+      if (!html) return '';
+      const text = html.replace(/<[^>]*>?/gm, '').trim();
+      return text.length > length ? text.slice(0, length) + '...' : text;
+    }
 
-  const entry = { id: String(Date.now()), date: todayKey(), passage: s.passage.trim(), lectioText: s.lectioText.trim(), meditatio: s.meditatio.trim(), oratio: s.oratio.trim() };
-  const next = [entry, ...s.history];
-  if(store.set('lectio_history', next)) {
-    s.history = next;
-    s.passage = ''; s.lectioText = ''; s.meditatio = ''; s.oratio = '';
-  }
-  s.saving = false;
-  render();
-}
+    // Generic Fetcher using rss2json API
+    async function fetchFeed(feedKey, renderCallback) {
+      const url = FEEDS[feedKey];
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
 
-function deleteLectioEntry(id) {
-  const next = state.lectio.history.filter(h => h.id !== id);
-  if(store.set('lectio_history', next)) {
-    state.lectio.history = next;
-    if(state.lectio.expandedId === id) state.lectio.expandedId = null;
-    render();
-  }
-}
+      try {
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+        if (data.status === 'ok') {
+          renderCallback(data.items);
+        } else {
+          throw new Error('RSS parsing error');
+        }
+      } catch (err) {
+        console.error(`Error loading feed [${feedKey}]:`, err);
+        return null;
+      }
+    }
 
-/* ---------- Tab 2: Intercessions ---------- */
-function renderIntercessionsTab(){
-  const s = state.inter;
-  let html = pageHeader('Intercessions', 'Prayer Intentions', 'Bring Your Requests to God');
-  html += '<div class="content"><div class="add-row">'
-    + '<input type="text" placeholder="Add a prayer intention..." data-bind="inter.text" data-enter-action="intercession-add" value="'+esc(s.text)+'">'
-    + '<button class="icon-btn-gold" data-action="intercession-add"'+(!s.text.trim()?' disabled':'')+'>+</button></div>';
+    // Render News / Videos Tab
+    function loadNewsFeed(type) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`filter-${type}`).classList.add('active');
 
-  if(!s.items.length){
-    html += '<div class="empty">No intentions added yet. Write a prayer intention above to begin.</div>';
-  } else {
-    s.items.forEach(item => {
-      html += '<div class="inter-row">'
-        + '<button class="check-circle'+(item.done?' done':'')+'" data-action="intercession-toggle" data-id="'+esc(item.id)+'">'+(item.done ? '✓' : '')+'</button>'
-        + '<div class="inter-text'+(item.done?' done':'')+'">'+esc(item.text)+'</div>'
-        + '<button class="trash-btn" data-action="intercession-delete" data-id="'+esc(item.id)+'">&#128465;</button></div>';
-    });
-  }
-  html += '</div>';
-  return html;
-}
+      const container = document.getElementById('news-container');
+      container.innerHTML = '<p class="loading">Loading items...</p>';
 
-/* ---------- Tab 3: Examen ---------- */
-function renderExamenTab(){
-  const s = state.examen;
-  const doneCount = Object.values(s.done).filter(Boolean).length;
-  const pct = Math.round((doneCount / EXAMEN_STEPS.length) * 100);
+      fetchFeed(type, (items) => {
+        container.dataset.loaded = "true";
+        if (!items || items.length === 0) {
+          container.innerHTML = '<p>No items found.</p>';
+          return;
+        }
 
-  let html = pageHeader('Daily Reflection','Ignatian Examen','Review of the Day');
-  html += '<div class="content"><div class="progress-row"><span class="field-label">Daily Progress</span><span class="entry-date">'+doneCount+' of '+EXAMEN_STEPS.length+' steps</span></div>'
-    + '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
-
-  EXAMEN_STEPS.forEach(step => {
-    const isDone = !!s.done[step.n];
-    html += '<button class="examen-step'+(isDone?' done':'')+'" data-action="examen-toggle" data-step="'+step.n+'">'
-      + '<div class="step-badge'+(isDone?' done':'')+'">'+(isDone?'✓':step.n)+'</div>'
-      + '<div style="flex:1;"><div class="step-title'+(isDone?' done':'')+'">'+esc(step.title)+'</div><div class="step-prompt">'+esc(step.prompt)+'</div></div></button>';
-  });
-
-  if(doneCount === EXAMEN_STEPS.length){
-    html += '<div class="examen-done">✥ You have completed today\'s Examen. Rest in God\'s peace.</div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-
-/* ---------- Tab 4: Daily Readings & Calendar ---------- */
-function renderDailyTab(){
-  const d = state.daily;
-  let html = pageHeader('Daily Readings','Feasts & Scripture','Daily Bread');
-  html += '<div class="content"><div class="field-row"><div class="section-label" style="margin:0;">Liturgical Calendar</div>'+ttsButton('saint')+'</div>';
-  
-  if(d.saintLoading){
-    html += '<div class="loading"><div class="spinner"></div> Loading liturgical feast…</div>';
-  } else if(d.saintError){
-    html += '<div class="err-text">'+esc(d.saintError)+' <a href="#" class="retry" data-action="saint-fetch">Retry</a></div>';
-  } else if(d.saintData){
-    const s = d.saintData;
-    const cels = s.celebrations || [];
-    html += '<div class="card" style="padding:16px; margin-top:8px;">';
-    html += '<div class="entry-date" style="margin-bottom:6px;">'+esc(fmtDate(s.date))+(s.season ? ' · '+esc(s.season) : '')+'</div>';
-    if(cels.length){
-      cels.forEach((c, idx)=>{
-        html += '<div class="celebration" style="'+(idx>0?'margin-top:12px;':'')+'">';
-        html += '<div class="dot" style="background:'+(c.color||'var(--gold)')+'"></div>';
-        html += '<div><div class="cel-title">'+esc(c.title)+'</div>';
-        if(c.rank) html += '<div class="cel-rank">'+esc(RANK_LABEL[c.rank]||c.rank)+'</div>';
-        html += '</div></div>';
+        container.innerHTML = items.map(item => `
+          <article class="card">
+            <h3><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a></h3>
+            <span class="card-date">${new Date(item.pubDate).toLocaleDateString()}</span>
+            <p>${cleanSnippet(item.description)}</p>
+            <a href="${item.link}" target="_blank" rel="noopener" class="read-more">Read / Watch &rarr;</a>
+          </article>
+        `).join('');
       });
-    } else {
-      html += '<div class="cel-title">Ferial Day</div>';
     }
-    html += '</div>';
-  }
 
-  html += fleuron() + '<div class="section-label">Universalis Mass Readings (RSS)</div>';
-  if(d.rssLoading){
-    html += '<div class="loading"><div class="spinner"></div> Fetching RSS Feed…</div>';
-  } else if(d.rssError){
-    html += '<div class="err-text">'+esc(d.rssError)+' <a href="#" class="retry" data-action="rss-fetch">Retry</a></div>';
-  } else if(d.rssItems.length){
-    d.rssItems.forEach(item => {
-      html += '<div class="card" style="padding:16px; margin-top:8px;">';
-      html += '<div class="cel-title">'+esc(item.title)+'</div>';
-      html += '<div class="entry-date" style="margin-bottom:8px;">'+esc(fmtDate(item.pubDate))+'</div>';
-      html += '<div class="sub-text">'+item.description+'</div></div>';
+    // Render Daily Readings Tab
+    function renderReadings(items) {
+      const container = document.getElementById('readings-container');
+      container.dataset.loaded = "true";
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p>No readings available for today.</p>';
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <div style="margin-bottom: 1.5rem;">
+          <h3><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a></h3>
+          <span class="card-date">${new Date(item.pubDate).toLocaleDateString()}</span>
+          <p>${item.description || ''}</p>
+        </div>
+      `).join('');
+    }
+
+    // Render Widgets (Saint & Prayer of the Day)
+    function initSidebarWidgets() {
+      fetchFeed('sofd', (items) => {
+        const el = document.getElementById('widget-sofd');
+        if (items && items[0]) {
+          el.innerHTML = `
+            <h3><a href="${items[0].link}" target="_blank" rel="noopener">${items[0].title}</a></h3>
+            <p>${cleanSnippet(items[0].description, 120)}</p>
+            <a href="${items[0].link}" target="_blank" rel="noopener" class="read-more">Learn More &rarr;</a>
+          `;
+        } else {
+          el.innerHTML = '<p class="error">Unavailable</p>';
+        }
+      });
+
+      fetchFeed('pofd', (items) => {
+        const el = document.getElementById('widget-pofd');
+        if (items && items[0]) {
+          el.innerHTML = `
+            <h3><a href="${items[0].link}" target="_blank" rel="noopener">${items[0].title}</a></h3>
+            <p>${cleanSnippet(items[0].description, 140)}</p>
+            <a href="${items[0].link}" target="_blank" rel="noopener" class="read-more">Full Prayer &rarr;</a>
+          `;
+        } else {
+          el.innerHTML = '<p class="error">Unavailable</p>';
+        }
+      });
+    }
+
+    // Initial Kickoff
+    document.addEventListener('DOMContentLoaded', () => {
+      initSidebarWidgets();
     });
-  }
-
-  html += fleuron() + '<div class="section-label">Scripture Lookup</div>';
-  html += '<div class="add-row">'
-    + '<input type="text" placeholder="e.g. John 3:16, Psalm 23" data-bind="daily.bibleQuery" data-enter-action="bible-search" value="'+esc(d.bibleQuery)+'">'
-    + '<button class="icon-btn-gold" data-action="bible-search"'+(!d.bibleQuery.trim()||d.bibleLoading?' disabled':'')+'>&#128065;</button></div>';
-
-  if(d.bibleLoading){
-    html += '<div class="loading"><div class="spinner"></div> Searching Scripture…</div>';
-  } else if(d.bibleError){
-    html += '<div class="err-text">'+esc(d.bibleError)+'</div>';
-  } else if(d.bibleResult){
-    const r = d.bibleResult;
-    html += '<div class="card" style="padding:16px;">';
-    html += '<div class="field-row" style="margin-bottom:8px;"><div class="entry-title" style="color:var(--maroon);">'+esc(r.reference)+'</div>'+ttsButton('bible')+'</div>';
-    html += '<div class="sub-text">'+esc(r.text.trim())+'</div></div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-
-/* ---------- API Fetching Helpers ---------- */
-async function loadSaintData(){
-  const d = state.daily;
-  if(d.saintLoading) return;
-  d.saintLoading = true; d.saintError = ''; render();
-  
-  const dateObj = new Date();
-  const y = dateObj.getFullYear();
-  const m = String(dateObj.getMonth()+1).padStart(2,'0');
-  const day = String(dateObj.getDate()).padStart(2,'0');
-
-  const primaryUrl = `https://calapi.inadiutorium.cz/api/v0/en/calendars/ireland/${y}/${m}/${day}`;
-  const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(primaryUrl)}`;
-
-  try {
-    let res = await fetchJSONResilient(primaryUrl);
-    if(!res.ok || !res.json){ res = await fetchJSONResilient(backupUrl); }
-
-    if(res.ok && res.json){
-      d.saintData = res.json;
-      d.saintLoaded = true;
-    } else {
-      d.saintData = { date: `${y}-${m}-${day}`, season: "Ordinary Time", celebrations: [{ title: "Ferial Day / Today's Liturgy", rank: "ferial", color: "green" }] };
-      d.saintLoaded = true;
-    }
-  } catch(e) {
-    d.saintError = 'Unable to fetch calendar data right now.';
-  } finally {
-    d.saintLoading = false; render();
-  }
-}
-
-async function fetchRSSFeed(){
-  const d = state.daily;
-  if(d.rssLoading) return;
-  d.rssLoading = true; d.rssError = ''; render();
-
-  const feedUrl = encodeURIComponent("https://universalis.com/atom3day.xml");
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`;
-
-  try {
-    const res = await fetchJSONResilient(apiUrl);
-    if(res.ok && res.json && res.json.status === 'ok'){
-      d.rssItems = (res.json.items || []).map(item => ({
-        title: item.title || 'Daily Reading',
-        pubDate: item.pubDate || item.updated || '',
-        description: item.content || item.description || item.summary || ''
-      }));
-      d.rssLoaded = true;
-    } else {
-      d.rssError = 'Unable to load Universalis readings.';
-    }
-  } catch(e) {
-    d.rssError = 'Error fetching daily feed.';
-  } finally {
-    d.rssLoading = false; 
-    render();
-  }
-}
-
-async function searchBible(){
-  const d = state.daily;
-  const q = d.bibleQuery.trim();
-  if(!q || d.bibleLoading) return;
-
-  d.bibleLoading = true; d.bibleError = ''; d.bibleResult = null; render();
-
-  try {
-    const res = await fetchJSONResilient(`https://bible-api.com/${encodeURIComponent(q)}`);
-    if(res.ok && res.json && res.json.text){
-      d.bibleResult = res.json;
-    } else {
-      d.bibleError = 'Passage not found. Try format e.g. "John 3:16" or "Psalm 23".';
-    }
-  } catch(e) {
-    d.bibleError = 'Network error fetching verse.';
-  } finally {
-    d.bibleLoading = false; render();
-  }
-}
-
-/* ---------- Main Render & Interactivity ---------- */
-function render(){
-  const app = document.getElementById('app');
-  let content = '';
-
-  if(state.tab === 'lectio') content = renderLectioTab();
-  else if(state.tab === 'inter') content = renderIntercessionsTab();
-  else if(state.tab === 'examen') content = renderExamenTab();
-  else if(state.tab === 'daily') content = renderDailyTab();
-
-  const tabs = [
-    { id:'lectio', label:'Lectio', icon:'&#128214;' },
-    { id:'inter', label:'Prayers', icon:'&#128591;' },
-    { id:'examen', label:'Examen', icon:'☀' },
-    { id:'daily', label:'Daily', icon:'✝' }
-  ];
-
-  let nav = '<nav class="tabbar"><div class="rule"></div><div class="row">';
-  tabs.forEach(t => {
-    const active = state.tab === t.id ? ' class="active"' : '';
-    nav += '<button'+active+' data-action="switch-tab" data-tab="'+t.id+'"><span class="icon">'+t.icon+'</span><span class="label">'+t.label+'</span></button>';
-  });
-  nav += '</div></nav>';
-
-  app.innerHTML = '<div class="banner"><span>In the morning Lord I praise You</span></div><div class="wrap">' + content + '</div>' + nav;
-
-  if(state.tab === 'daily'){
-    if(!state.daily.saintLoaded && !state.daily.saintLoading) loadSaintData();
-    if(!state.daily.rssLoaded && !state.daily.rssLoading) fetchRSSFeed();
-  }
-}
-
-/* ---------- Event Delegation ---------- */
-document.addEventListener('input', e => {
-  const path = e.target.getAttribute('data-bind');
-  if(path){
-    setPath(state, path, e.target.value);
-    if(state.tab === 'lectio') {
-      const btn = document.querySelector('[data-action="lectio-save"]');
-      if(btn){
-        const canSave = (state.lectio.passage + state.lectio.lectioText + state.lectio.meditatio + state.lectio.oratio).trim().length > 0;
-        btn.disabled = !canSave || state.lectio.saving;
-      }
-    }
-  }
-});
-
-document.addEventListener('keydown', e => {
-  if(e.key === 'Enter'){
-    const action = e.target.getAttribute('data-enter-action');
-    if(action === 'intercession-add'){
-      e.preventDefault();
-      const txt = state.inter.text.trim();
-      if(txt){
-        const next = [{ id: String(Date.now()), text: txt, done: false }, ...state.inter.items];
-        if(store.set('inter_items', next)){ state.inter.items = next; state.inter.text = ''; render(); }
-      }
-    } else if(action === 'bible-search'){
-      e.preventDefault();
-      searchBible();
-    }
-  }
-});
-
-document.addEventListener('click', e => {
-  const btn = e.target.closest('[data-action]');
-  if(!btn) return;
-  const action = btn.getAttribute('data-action');
-
-  if(action === 'switch-tab'){ state.tab = btn.getAttribute('data-tab'); render(); }
-  else if(action === 'tts'){ toggleSpeak(btn.getAttribute('data-key')); }
-  else if(action === 'lectio-save'){ saveLectioEntry(); }
-  else if(action === 'lectio-toggle-entry'){
-    const id = btn.getAttribute('data-id');
-    state.lectio.expandedId = state.lectio.expandedId === id ? null : id;
-    render();
-  }
-  else if(action === 'lectio-delete'){ deleteLectioEntry(btn.getAttribute('data-id')); }
-  else if(action === 'intercession-add'){
-    const txt = state.inter.text.trim();
-    if(txt){
-      const next = [{ id: String(Date.now()), text: txt, done: false }, ...state.inter.items];
-      if(store.set('inter_items', next)){ state.inter.items = next; state.inter.text = ''; render(); }
-    }
-  }
-  else if(action === 'intercession-toggle'){
-    const id = btn.getAttribute('data-id');
-    const next = state.inter.items.map(i => i.id === id ? { ...i, done: !i.done } : i);
-    if(store.set('inter_items', next)){ state.inter.items = next; render(); }
-  }
-  else if(action === 'intercession-delete'){
-    const id = btn.getAttribute('data-id');
-    const next = state.inter.items.filter(i => i.id !== id);
-    if(store.set('inter_items', next)){ state.inter.items = next; render(); }
-  }
-  else if(action === 'examen-toggle'){
-    const step = btn.getAttribute('data-step');
-    const key = 'examen_' + todayKey();
-    const cur = { ...state.examen.done };
-    cur[step] = !cur[step];
-    if(store.set(key, cur)){ state.examen.done = cur; render(); }
-  }
-  else if(action === 'saint-fetch'){ e.preventDefault(); loadSaintData(); }
-  else if(action === 'rss-fetch'){ e.preventDefault(); fetchRSSFeed(); }
-  else if(action === 'bible-search'){ searchBible(); }
-});
-
-render();
-</script>
+  </script>
 </body>
 </html>
-
-
