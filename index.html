@@ -243,27 +243,6 @@
       text-align: center;
       margin: 10px 0;
     }
-
-    .tab-nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .tab-btn {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 6px 12px;
-    }
-
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
   </style>
 </head>
 <body>
@@ -274,7 +253,7 @@
       <p id="liturgical-day">Loading Liturgical Calendar (Irish Calendar)...</p>
     </header>
 
-    <!-- Daily Passage Container from Published Google Sheet CSV -->
+    <!-- Daily Passage Container -->
     <div id="daily-passage-container">
       <div class="empty">Loading daily reflection...</div>
     </div>
@@ -289,7 +268,7 @@
           <button class="tts-btn" onclick="speakText('mass-readings-content')">Listen to Readings</button>
         </div>
 
-        <!-- Interactive Holy Rosary Interactive Companion -->
+        <!-- Interactive Holy Rosary Companion -->
         <div class="card">
           <h2>Interactive Rosary Companion</h2>
           <div class="controls">
@@ -407,93 +386,102 @@
   <script>
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpzjiV-Ybxu45QFGiPKwbICHAIJPAqwq2-hM1bkNshdClaQ5_q1QbMp7KGi0_tSgcZvVx4Hewo0PRg/pub?output=csv';
 
-// Updated fetch function with a dedicated text container ID
-async function fetchDailyPassage() {
-  const container = document.getElementById('daily-passage-container');
-  if (!container) return;
+    // 1. Google Sheets Daily Reflection Parsing (With CORS Fallback)
+    async function fetchDailyPassage() {
+      const container = document.getElementById('daily-passage-container');
+      if (!container) return;
 
-  try {
-    const response = await fetch(SHEET_CSV_URL);
-    const csvText = await response.text();
-    const rows = parseCSV(csvText);
-    
-    const today = new Date();
-    const startOfYear = new Date(today.getFullYear(), 0, 0);
-    const diff = today - startOfYear;
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
+      let csvText = '';
+      try {
+        // Direct fetch attempt with cache clearing parameter
+        const directUrl = `${SHEET_CSV_URL}&_nocache=${new Date().getTime()}`;
+        let response = await fetch(directUrl);
+        
+        if (!response.ok) {
+          // Fallback to CORS proxy if direct published link is blocked by browser CORS policy
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV_URL)}`;
+          response = await fetch(proxyUrl);
+        }
 
-    const matchedRow = rows.find(r => r[0] && parseInt(r[0].trim()) === dayOfYear);
+        csvText = await response.text();
+      } catch (err) {
+        console.error('Error fetching sheet CSV:', err);
+        container.innerHTML = '<div class="err-text">Unable to load daily passage. Please check network connection.</div>';
+        return;
+      }
 
-    if (matchedRow && matchedRow[1]) {
-      const passageText = matchedRow[1].trim();
-      const paragraphs = passageText
-        .split(/\n\s*\n/)
-        .map(p => `<p class="sub-text">${p.trim()}</p>`)
-        .join('');
+      try {
+        const rows = parseCSV(csvText);
+        
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 0);
+        const diff = today - startOfYear;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
 
-      container.innerHTML = `
-        <div class="card">
-          <h2>Daily Reflection (Day ${dayOfYear})</h2>
-          <div id="reflection-text-body">
-            ${paragraphs}
-          </div>
-          <button class="tts-btn" onclick="speakText('reflection-text-body')">Listen to Reflection</button>
-        </div>
-      `;
-    } else {
-      container.innerHTML = '<div class="empty">No reflection found for today.</div>';
-    }
-  } catch (err) {
-    console.error('Error fetching daily passage:', err);
-    container.innerHTML = '<div class="err-text">Unable to load daily passage.</div>';
-  }
-}
+        const matchedRow = rows.find(r => r[0] && parseInt(r[0].trim()) === dayOfYear);
 
-// Robust Text-to-Speech function
-function speakText(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+        if (matchedRow && matchedRow[1]) {
+          const passageText = matchedRow[1].trim();
+          const paragraphs = passageText
+            .split(/\n\s*\n/)
+            .map(p => `<p class="sub-text">${p.trim()}</p>`)
+            .join('');
 
-  if ('speechSynthesis' in window) {
-    // Cancel any ongoing speech first
-    window.speechSynthesis.cancel();
-
-    // Extract clean text content only
-    const textToSpeak = container.innerText || container.textContent;
-    if (!textToSpeak.trim()) return;
-
-    const utterance = new SpeechSynthesisUtterance(textToSpeak.trim());
-    utterance.rate = 0.95;
-    utterance.pitch = 1.0;
-
-    // Workaround for browser voice loading delays
-    let voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      // Prefer an English voice if available
-      const englishVoice = voices.find(v => v.lang.startsWith('en'));
-      if (englishVoice) utterance.voice = englishVoice;
+          container.innerHTML = `
+            <div class="card">
+              <h2>Daily Reflection (Day ${dayOfYear})</h2>
+              <div id="reflection-text-body">
+                ${paragraphs}
+              </div>
+              <button class="tts-btn" onclick="speakText('reflection-text-body')">Listen to Reflection</button>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `<div class="empty">No reflection found for Day ${dayOfYear}. Ensure Day ${dayOfYear} is entered in Column A.</div>`;
+        }
+      } catch (err) {
+        console.error('Error parsing CSV data:', err);
+        container.innerHTML = '<div class="err-text">Error parsing reflection data.</div>';
+      }
     }
 
-    window.speechSynthesis.speak(utterance);
-  } else {
-    alert('Text-to-speech is not supported by your browser.');
-  }
-}
+    function parseCSV(text) {
+      const lines = [];
+      let row = [];
+      let currentVal = '';
+      let insideQuotes = false;
 
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
 
-
-
-
-
-    
-
-
-
-
-
-
-  
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentVal += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          row.push(currentVal);
+          currentVal = '';
+        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+          if (char === '\r' && nextChar === '\n') i++;
+          row.push(currentVal);
+          lines.push(row);
+          row = [];
+          currentVal = '';
+        } else {
+          currentVal += char;
+        }
+      }
+      if (currentVal || row.length) {
+        row.push(currentVal);
+        lines.push(row);
+      }
+      return lines;
+    }
 
     // 2. Liturgical Calendar API Integration (Irish Calendar Configured)
     async function fetchLiturgicalCalendar() {
@@ -650,7 +638,7 @@ function speakText(containerId) {
 
     // 7. Chaplet of Divine Mercy Counter
     let chapletCount = 0;
-    const chapletTotal = 47; // 1 Opening + 5*(1 + 10) - simplified count layout
+    const chapletTotal = 47;
 
     function incrementChaplet() {
       if (chapletCount < chapletTotal) {
@@ -672,7 +660,7 @@ function speakText(containerId) {
       else instr.textContent = "Decade Bead: For the sake of His sorrowful Passion, have mercy on us and on the whole world.";
     }
 
-    // 8. Prayer Bell Chime (Web Audio API Synthesizer)
+    // 8. Prayer Bell Chime
     function ringBell() {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -681,7 +669,7 @@ function speakText(containerId) {
         const gain = ctx.createGain();
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
         gain.gain.setValueAtTime(0.5, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 3.0);
 
@@ -694,7 +682,7 @@ function speakText(containerId) {
       }
     }
 
-    // 9. Catechism Local Knowledge Base Lookup
+    // 9. Catechism Local Lookup
     const catechismDB = {
       "eucharist": "CCC 1324: The Eucharist is 'the source and summit of the Christian life.' The other sacraments are bound up with the Eucharist and are oriented toward it.",
       "grace": "CCC 1996: Our justification comes from the grace of God. Grace is favor, the free and undeserved help that God gives us to respond to his call.",
@@ -715,7 +703,7 @@ function speakText(containerId) {
       }
     }
 
-    // 10. Lectio Divina Journal (Local Storage)
+    // 10. Lectio Divina Journal
     function saveLectioEntry() {
       const passage = document.getElementById('lectio-passage').value.trim();
       const notes = document.getElementById('lectio-notes').value.trim();
@@ -745,7 +733,7 @@ function speakText(containerId) {
       `).join('');
     }
 
-    // 11. Intercessory Prayers List (Local Storage)
+    // 11. Intercessory Prayers List
     function addPrayer() {
       const input = document.getElementById('prayer-input');
       const text = input.value.trim();
@@ -803,23 +791,34 @@ function speakText(containerId) {
       }
     }
 
-    // 13. Text-to-Speech Integration
+    // 13. Text-to-Speech Engine
     function speakText(containerId) {
       const container = document.getElementById(containerId);
       if (!container) return;
 
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const textToSpeak = container.innerText.replace(/Listen to Reflection|Listen to Readings|Listen to Angelus/g, '');
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        
+        const textToSpeak = container.innerText || container.textContent;
+        if (!textToSpeak || !textToSpeak.trim()) return;
+
+        const utterance = new SpeechSynthesisUtterance(textToSpeak.trim());
         utterance.rate = 0.95;
+        utterance.pitch = 1.0;
+
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          const englishVoice = voices.find(v => v.lang.startsWith('en'));
+          if (englishVoice) utterance.voice = englishVoice;
+        }
+
         window.speechSynthesis.speak(utterance);
       } else {
         alert('Text-to-speech is not supported by your browser.');
       }
     }
 
-    // Initialize all components on page load
+    // Initialize all components
     document.addEventListener('DOMContentLoaded', () => {
       fetchDailyPassage();
       fetchLiturgicalCalendar();
