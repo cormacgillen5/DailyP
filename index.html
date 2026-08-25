@@ -177,7 +177,7 @@
       <p id="liturgical-day">Loading Liturgical Calendar (Irish Calendar)...</p>
     </header>
 
-    <!-- Daily Passage Container from Published Google Sheet CSV -->
+    <!-- Daily Passage Container -->
     <div id="daily-passage-container">
       <div class="empty">Loading daily reflection...</div>
     </div>
@@ -245,7 +245,6 @@
   <script>
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpzjiV-Ybxu45QFGiPKwbICHAIJPAqwq2-hM1bkNshdClaQ5_q1QbMp7KGi0_tSgcZvVx4Hewo0PRg/pub?output=csv';
 
-    // Fetch Google Sheet Daily Reflection
     async function fetchDailyPassage() {
       const container = document.getElementById('daily-passage-container');
       if (!container) return;
@@ -330,7 +329,7 @@
       return lines;
     }
 
-    // Liturgical Calendar API Integration (Irish Calendar Configured)
+    // Liturgical Calendar API Integration (Configured for Irish Calendar)
     async function fetchLiturgicalCalendar() {
       const dateEl = document.getElementById('liturgical-day');
       try {
@@ -339,7 +338,6 @@
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         
-        // Inadiutorium API for Irish National Calendar
         const res = await fetch(`https://api.inadiutorium.cz/api/v1/en/calendars/ie/${year}/${month}/${day}`);
         if (res.ok) {
           const data = await res.json();
@@ -517,7 +515,7 @@
       }
     }
 
-    // Web Speech API - Text to Speech Integration
+    // Web Speech API - Text to Speech
     function speakText(containerId) {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -533,7 +531,7 @@
       }
     }
 
-    // Initialize all components on DOM ready
+    // Execute scripts once DOM is fully loaded
     document.addEventListener('DOMContentLoaded', () => {
       fetchDailyPassage();
       fetchLiturgicalCalendar();
