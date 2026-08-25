@@ -407,83 +407,93 @@
   <script>
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpzjiV-Ybxu45QFGiPKwbICHAIJPAqwq2-hM1bkNshdClaQ5_q1QbMp7KGi0_tSgcZvVx4Hewo0PRg/pub?output=csv';
 
-    // 1. Google Sheets Daily Reflection Parsing
-    async function fetchDailyPassage() {
-      const container = document.getElementById('daily-passage-container');
-      if (!container) return;
+// Updated fetch function with a dedicated text container ID
+async function fetchDailyPassage() {
+  const container = document.getElementById('daily-passage-container');
+  if (!container) return;
 
-      try {
-        const response = await fetch(SHEET_CSV_URL);
-        const csvText = await response.text();
-        const rows = parseCSV(csvText);
-        
-        const today = new Date();
-        const startOfYear = new Date(today.getFullYear(), 0, 0);
-        const diff = today - startOfYear;
-        const oneDay = 1000 * 60 * 60 * 24;
-        const dayOfYear = Math.floor(diff / oneDay);
+  try {
+    const response = await fetch(SHEET_CSV_URL);
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 0);
+    const diff = today - startOfYear;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
 
-        const matchedRow = rows.find(r => r[0] && parseInt(r[0].trim()) === dayOfYear);
+    const matchedRow = rows.find(r => r[0] && parseInt(r[0].trim()) === dayOfYear);
 
-        if (matchedRow && matchedRow[1]) {
-          const passageText = matchedRow[1].trim();
-          const paragraphs = passageText
-            .split(/\n\s*\n/)
-            .map(p => `<p class="sub-text">${p.trim()}</p>`)
-            .join('');
+    if (matchedRow && matchedRow[1]) {
+      const passageText = matchedRow[1].trim();
+      const paragraphs = passageText
+        .split(/\n\s*\n/)
+        .map(p => `<p class="sub-text">${p.trim()}</p>`)
+        .join('');
 
-          container.innerHTML = `
-            <div class="card">
-              <h2>Daily Reflection (Day ${dayOfYear})</h2>
-              ${paragraphs}
-              <button class="tts-btn" onclick="speakText('daily-passage-container')">Listen to Reflection</button>
-            </div>
-          `;
-        } else {
-          container.innerHTML = '<div class="empty">No reflection found for today.</div>';
-        }
-      } catch (err) {
-        console.error('Error fetching daily passage:', err);
-        container.innerHTML = '<div class="err-text">Unable to load daily passage.</div>';
-      }
+      container.innerHTML = `
+        <div class="card">
+          <h2>Daily Reflection (Day ${dayOfYear})</h2>
+          <div id="reflection-text-body">
+            ${paragraphs}
+          </div>
+          <button class="tts-btn" onclick="speakText('reflection-text-body')">Listen to Reflection</button>
+        </div>
+      `;
+    } else {
+      container.innerHTML = '<div class="empty">No reflection found for today.</div>';
+    }
+  } catch (err) {
+    console.error('Error fetching daily passage:', err);
+    container.innerHTML = '<div class="err-text">Unable to load daily passage.</div>';
+  }
+}
+
+// Robust Text-to-Speech function
+function speakText(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  if ('speechSynthesis' in window) {
+    // Cancel any ongoing speech first
+    window.speechSynthesis.cancel();
+
+    // Extract clean text content only
+    const textToSpeak = container.innerText || container.textContent;
+    if (!textToSpeak.trim()) return;
+
+    const utterance = new SpeechSynthesisUtterance(textToSpeak.trim());
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    // Workaround for browser voice loading delays
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      // Prefer an English voice if available
+      const englishVoice = voices.find(v => v.lang.startsWith('en'));
+      if (englishVoice) utterance.voice = englishVoice;
     }
 
-    function parseCSV(text) {
-      const lines = [];
-      let row = [];
-      let currentVal = '';
-      let insideQuotes = false;
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert('Text-to-speech is not supported by your browser.');
+  }
+}
 
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const nextChar = text[i + 1];
 
-        if (char === '"') {
-          if (insideQuotes && nextChar === '"') {
-            currentVal += '"';
-            i++;
-          } else {
-            insideQuotes = !insideQuotes;
-          }
-        } else if (char === ',' && !insideQuotes) {
-          row.push(currentVal);
-          currentVal = '';
-        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
-          if (char === '\r' && nextChar === '\n') i++;
-          row.push(currentVal);
-          lines.push(row);
-          row = [];
-          currentVal = '';
-        } else {
-          currentVal += char;
-        }
-      }
-      if (currentVal || row.length) {
-        row.push(currentVal);
-        lines.push(row);
-      }
-      return lines;
-    }
+
+
+
+
+    
+
+
+
+
+
+
+  
 
     // 2. Liturgical Calendar API Integration (Irish Calendar Configured)
     async function fetchLiturgicalCalendar() {
